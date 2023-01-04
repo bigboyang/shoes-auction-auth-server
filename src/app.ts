@@ -9,7 +9,6 @@ import router from './routes/index.route';
 import { resError } from './utils/handler';
 import ErrorException from './exceptions/form.exception';
 import { notFoundRoute, badData } from './exceptions/definition.exception';
-
 import { checkDbConnection } from './models/index.model';
 
 const app: express.Application = express();
