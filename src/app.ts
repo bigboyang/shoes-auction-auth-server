@@ -1,27 +1,22 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 import { isCelebrateError } from 'celebrate';
 
 import envConfig from './config/env.config';
 import logger from './config/log.config';
 import router from './routes/index.route';
+import { AuthorizationMiddleware } from './middlewares';
 
-import { resError } from './utils/handler';
+import { resError, proxyError } from './utils/handler';
 import ErrorException from './exceptions/form.exception';
 import { notFoundRoute, badData } from './exceptions/definition.exception';
 import { checkDbConnection } from './models/index.model';
 
 const app: express.Application = express();
 
-const { port } = envConfig;
-
-app.use(
-  express.urlencoded({
-    limit: '50mb',
-    extended: false,
-    parameterLimit: 1000000,
-  })
-);
+const { port, userServer, productServer, logServer } = envConfig;
+const { verifyHeaders } = AuthorizationMiddleware;
 
 // cors
 const corsOptions: cors.CorsOptions = {   
@@ -31,14 +26,36 @@ const corsOptions: cors.CorsOptions = {
 };
 app.use( cors( corsOptions ) );
 
+// favicon 204
+app.get( '/favicon.ico', ( req: Request, res: Response ) => res.sendStatus( 204 ) );
+
 // incoming log
 app.use( ({ hostname, ip, method, url, headers, body }: Request, res: Response, next: NextFunction ) => {
   logger.info({ hostname, ip, method, url, headers, body });
   next();
 });
 
+// proxy setting
+app.use( '/user-service', verifyHeaders, createProxyMiddleware({ target: userServer, changeOrigin: true, pathRewrite: { ['/user-service']: '' }, logLevel: 'error', logProvider: () => logger, onError: proxyError }) );
+app.use( '/product-service', verifyHeaders, createProxyMiddleware({ target: productServer, changeOrigin: true, pathRewrite: { ['/product-service']: '' }, logLevel: 'error', logProvider: () => logger, onError: proxyError }) );
+app.use( '/log-service', verifyHeaders, createProxyMiddleware({ target: logServer, changeOrigin: true, pathRewrite: { ['/log-service']: '' }, logLevel: 'error', logProvider: () => logger, onError: proxyError }) );
+
+app.use( express.json({ limit: '50mb' }) );
+app.use(
+  express.urlencoded({
+    limit: '50mb',
+    extended: false,
+    parameterLimit: 1000000,
+  })
+);
+
+// health check end point
+app.use( '/actuator/health', ( req: Request, res: Response ) => {
+  res.send({ resultCode: 0, resultMessage: 'OK' }); 
+});
+
 // service router
-app.use( router );
+app.use( '/auth-service', router );
 
 // server on
 app.listen( port , async () => {

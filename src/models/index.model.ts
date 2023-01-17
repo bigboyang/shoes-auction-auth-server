@@ -83,6 +83,7 @@ export const checkDbConnection = async () => {
 
     logger.info({ dbMsg: '[DB]Connection has been established successfully.' });
   } catch ( error ) {
+    console.log( error );
     logger.error({ dbMsg: `[DB]Unable to connect to the database error=${error}` });
   }
 };

@@ -19,3 +19,6 @@ export const notFoundRoute = new ExceptionAttribute( 404, 80400, 'Not found rout
 
 // 500
 export const ServerErrorForLogout = new ExceptionAttribute( 500, 85001, 'Server Error' );
+
+// 502
+export const econnrefused = new ExceptionAttribute( 502, 10502, 'Server connection refused' );
