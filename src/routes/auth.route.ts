@@ -4,7 +4,7 @@ import { Joi, Segments, celebrate } from 'celebrate';
 import ErrorException from '../exceptions/form.exception';
 import { badRequest, badData, unAuthorized } from '../exceptions/definition.exception';
 import { resSuccess, responseWrapper } from '../utils/handler';
-import { AuthorizationService } from 'src/services/index.service';
+import { AuthorizationService } from 'src/services';
 
 const router = Router();
 

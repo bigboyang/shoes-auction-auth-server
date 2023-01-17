@@ -1,4 +1,4 @@
-import { AuthorizationRepository } from '../repositories/index.repository';
+import { AuthorizationRepository } from '../repositories';
 
 export const aaa = () => {
   console.log( 'service' );

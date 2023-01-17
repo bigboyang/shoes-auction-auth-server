@@ -1,4 +1,4 @@
-import db from '../models/index.model';
+import db from '../models';
 
 const { Authorization } = db;
 
