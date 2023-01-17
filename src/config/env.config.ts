@@ -19,7 +19,7 @@ const envConfig = {
   // another server url
   authServer: process.env.AUTH_SERVER_ADDRESS,
   userServer: process.env.USER_SERVER_ADDRESS,
-  productServer: process.env.PRODCUT_SERVER_ADDRESS,
+  productServer: process.env.PRODUCT_SERVER_ADDRESS,
   logServer: process.env.LOG_SERVER_ADDRESS,
   
   // mq

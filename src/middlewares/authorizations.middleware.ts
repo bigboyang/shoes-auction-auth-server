@@ -5,7 +5,8 @@ export const verifyHeaders = async ( req: Request, res: Response, next: NextFunc
   const { authorization } = req.headers;
 
   try {
-
+    console.log( 0 );
+    
     next();
   } catch ( error ) {
     logger.error( error );

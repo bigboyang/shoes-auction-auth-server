@@ -12,18 +12,33 @@ const { userServer, productServer, logServer } = envConfig;
 
 // proxy setting
 app.use( '/user-service', verifyHeaders, createProxyMiddleware({
-  target: userServer, changeOrigin: true, pathRewrite: { ['/user-service']: '' }, logLevel: 'error', logProvider: () => logger, onError: ( error ) => {
-    logger.error( error ); 
-    throw new ErrorException( econnrefused ); }, 
-}) );
-app.use( '/product-service', verifyHeaders, createProxyMiddleware({
-  target: productServer, changeOrigin: true, pathRewrite: { ['/product-service']: '' }, logLevel: 'error', logProvider: () => logger, onError: ( error ) => {
+  target: userServer, 
+  changeOrigin: true, 
+  pathRewrite: { ['/user-service']: '' }, 
+  logLevel: 'error', 
+  logProvider: () => logger, 
+  onError: ( error ) => {
     logger.error( error ); 
     throw new ErrorException( econnrefused ); }, 
 }) );
 app.use( '/log-service', verifyHeaders, createProxyMiddleware({
-  target: logServer, changeOrigin: true, pathRewrite: { ['/log-service']: '' }, logLevel: 'error', logProvider: () => logger, onError: ( error ) => {
+  target: logServer, 
+  changeOrigin: true, 
+  pathRewrite: { ['/log-service']: '' }, 
+  logLevel: 'error', 
+  logProvider: () => logger, 
+  onError: ( error ) => {
     logger.error( error ); 
+    throw new ErrorException( econnrefused ); }, 
+}) );
+app.use( '/product-service', verifyHeaders, createProxyMiddleware({
+  target: productServer,
+  changeOrigin: true, 
+  pathRewrite: { ['/product-service']: '' }, 
+  logLevel: 'error', 
+  logProvider: () => logger, 
+  onError: ( error ) => {
+    logger.error( error );
     throw new ErrorException( econnrefused ); }, 
 }) );
 
