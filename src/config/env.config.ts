@@ -7,7 +7,7 @@ const envConfig = {
   env: process.env.ENV,
   
   // port
-  port: process.env.AUTH_PORT || 3001,
+  port: process.env.AUTH_PORT || 3000,
 
   // db
   database: process.env.AUTH_MYSQL_DB,
