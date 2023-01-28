@@ -4,10 +4,10 @@ import { Joi, Segments, celebrate } from 'celebrate';
 import ErrorException from '../exceptions/form.exception';
 import { badRequest, badData, unAuthorized } from '../exceptions/definition.exception';
 import { resSuccess, responseWrapper } from '../utils/handler';
-import { AuthorizationService } from 'src/services';
+import { AuthorizationService } from '../services';
 import { verifyHeaders } from '../middlewares/authorizations.middleware';
 // const redisClient = require( '../utils/redis' );
-const jwtUtils = require( '../utils/jwt-utils' );
+import jwtUtils from '../utils/jwt-utils';
 
 const router = Router();
 
@@ -23,27 +23,19 @@ router.get( '/authorization/:userUuid', responseWrapper( async ( req: Request, r
 }) );
 
 // 로그인 - 토큰 발급
-router.post( '/login', responseWrapper( async ( req: Request, res: Response ) => {
-  const { userId, password } = req.body;
+router.post( '/tokens', responseWrapper( async ( req: Request, res: Response ) => {
+  // user-server에서 데이터 받아옴
+  const { userId, role } = req.body;
 
-  if ( !userId || !password ) {
-    throw new ErrorException( badRequest );
-  }
-
-  // user-server에서 유저 정보 가져오기
-  const success = true;
-
-  if ( !success ) {
-    throw new ErrorException( unAuthorized );
+  if ( !userId || !role ) {
+    throw new ErrorException( badData );
   }
 
   const accessToken = jwtUtils.sign( req.body );
-  const refreshToken = jwtUtils.refresh();
+  const refreshToken = jwtUtils.createRefresh();
+  // await redisClient.set( userId, refreshToken ); // refresh token redis에 저장
 
-  res.header({ 'Authorization': accessToken, 'refresh': refreshToken });
-
-  // redisClient.set( userId, refreshToken ); // refresh token redis에 저장
-  resSuccess( res , { access_token: accessToken, refresh_token : refreshToken });
+  resSuccess( res , { accessToken, refreshToken });
 }) );
 
 // 헤더 테스트

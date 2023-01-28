@@ -10,6 +10,11 @@ import { verifyHeaders } from './authorizations.middleware';
 const app: express.Application = express();
 const { userServer, productServer, logServer } = envConfig;
 
+// ex) 
+// https://shoe-auction.com::authPort/user-service/userServer/login
+// 밑의 url로 변경됨
+// https://shoe-auction.com::userPort/userServer/login
+
 // proxy setting
 app.use( '/user-service', verifyHeaders, createProxyMiddleware({
   target: userServer, 

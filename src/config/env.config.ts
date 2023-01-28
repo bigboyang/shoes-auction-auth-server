@@ -21,6 +21,8 @@ const envConfig = {
   userServer: process.env.USER_SERVER_ADDRESS,
   productServer: process.env.PRODUCT_SERVER_ADDRESS,
   logServer: process.env.LOG_SERVER_ADDRESS,
+
+  jwtSecret: process.env.JWT_SECRET,
   
   // mq
   // mqServerAddress: process.env.MQ_SERVER_ADDRESS,
