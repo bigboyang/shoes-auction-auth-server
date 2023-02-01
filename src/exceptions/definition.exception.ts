@@ -13,6 +13,7 @@ export const notFoundData = new ExceptionAttribute( 400, 80100, 'Empty Data' );
 // 401
 export const unAuthorized = new ExceptionAttribute( 401, 80100, 'Have no authorization' );
 export const unAuthorizedToken = new ExceptionAttribute( 400, 80101, 'Unauthorized Token' );
+export const expiredToken = new ExceptionAttribute( 400, 80101, 'expired Token' );
 
 // 404
 export const notFoundRoute = new ExceptionAttribute( 404, 80400, 'Not found route' );

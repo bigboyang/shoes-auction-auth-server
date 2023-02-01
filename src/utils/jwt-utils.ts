@@ -1,12 +1,17 @@
-// import { promisify } from 'util';
 import jwt from 'jsonwebtoken'; 
-// const redisClient = require( './redis' );
+import ErrorException from 'src/exceptions/form.exception';
 import envConfig from '../config/env.config';
+import redisClient from './redis';
 
 const { jwtSecret } = envConfig;
 
+const TOKEN_EXPIRED = '-1';  // 토큰 만료
+const TOKEN_INVALID = '-2';  // 유효하지 않은 토큰
+
+
 // 로그인 시 사용자 정보를 토대로 access token 발급
 const sign = ( user ) => { // access token 발급
+  console.log( "jwtSecret : " + jwtSecret );
   const payload = { // accesks token에 들어갈 payload
     role : user.role,
     userId: user.userId,
@@ -19,19 +24,20 @@ const sign = ( user ) => { // access token 발급
 };
 
 const verify = ( token ) => { // access token 검증
-  console.log( "verify token : " + token );
+  let result;
   try {
-    const decoded = jwt.verify( token, jwtSecret );
-    return {
-      ok: true,
-      userId: decoded.userId,
-    };
+    result = jwt.verify( token, jwtSecret );
+    result.ok = true;
+    result.message = 'valid token';
   } catch ( err ) {
-    return {
-      ok: false,
-      message: err.message,
-    };
+    result.ok = false;
+    if ( err.message === 'jwt expired' ) {
+      result.message = 'token expired';
+    } else {
+      result.message = 'invalid token';
+    }
   }
+  return result;
 };
 
 const createRefresh = () => { // refresh token 발급
@@ -43,8 +49,7 @@ const createRefresh = () => { // refresh token 발급
 
 const refreshVerify = async ( token, userId ) => { // refresh token 검증
 
-  // const data = await redisClient.get( userId ); // refresh token 가져오기
-  const data = "";
+  const data = await redisClient.get( userId ); // refresh token 가져오기
     
   try {
     console.log( "data :" + data );
