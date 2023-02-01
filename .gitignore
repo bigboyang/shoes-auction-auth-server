@@ -34,9 +34,3 @@ typings/
 #db
 .dbdata/
 
-#해당 서버에서 redis 사용 안함
-src/utils/redis.ts
-
-# 도커파일
-Dockerfile
-docker-compose.yml
