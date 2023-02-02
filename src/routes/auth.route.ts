@@ -10,17 +10,6 @@ import redisClient from '../utils/redis';
 
 const router = Router();
 
-router.get( '/authorization/:userUuid', responseWrapper( async ( req: Request, res: Response ) => {
-  const { userUuid } = req.params;
-  
-  if ( !userUuid ) {
-    throw new ErrorException( badData );
-  }
-
-  console.log( userUuid );
-  resSuccess( res, { result: userUuid });
-}) );
-
 // 로그인 - 토큰 발급
 router.post( '/tokens', responseWrapper( async ( req: Request, res: Response ) => {
 
