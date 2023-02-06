@@ -22,61 +22,31 @@ const sign = ({ role, userId }) => { // access token 발급
 
   return jwt.sign( payload, jwtSecret, { // secret으로 sign하여 발급하고 return
     algorithm: 'HS256', // 암호화 알고리즘
-    expiresIn: '1m', 	  // 유효기간
+    expiresIn: '1h', 	  // 유효기간
   });
 };
 
 const verify = ( token ) => { // access token 검증
-  let result;
-  try {
-    result = jwt.verify( token, jwtSecret );
-  } catch ( err ) {
-    // ! middleware 단에서도 if문으로 에러 메세지가 어떤 값인지 체크하고 있던데,
-    // ! 에러 메세지 체크를 여기서도 하고 middleware 쪽에서도 하는 건 중복 작업인 듯!
-    // ! 여기서든, middleware 쪽에서든 어느 한 곳의 작업은 줄이는 게 좋은 코드일 듯!
 
-    console.log( "err-message : " + err.message );
-
-    if ( err.message === 'invalid signature' ) { // 1. 유효하지 않은 토큰
-      console.log( "유효하지 않은 토큰" );
-      throw new ErrorException ( unAuthorizedToken );
-    }
-    if ( err.message === 'jwt expired' ) {   // 2. 만료 체크
-      console.log( "만료된 토큰" );
-      throw new ErrorException ( expiredToken );
-    } 
-    
-  }
+  const result = jwt.verify( token, jwtSecret, ( err, result ) => {
+    return { err, result };
+  });
   return result;
 };
 
 const createRefresh = () => { // refresh token 발급
   return jwt.sign({}, jwtSecret, { // refresh token은 payload 없이 발급
     algorithm: 'HS256',
-    expiresIn: '10m',
+    expiresIn: '2h',
   });
 };
 
-const refreshVerify = async ( token, userId ) => { // refresh token 검증
+const verifyRefresh = async ( token ) => { // refresh token 검증
+  const { err, result } = jwt.verify( token, jwtSecret, ( err,result ) => {
+    return { err, result };
+  });
 
-  const data = await redisClient.get( userId ); // refresh token 가져오기
-    
-  console.log( "data :" + data );
-  // ! 밑쪽은 보기에 안 좋은 코드인 듯! 전체적인 리팩토링이 필요할 듯!
-  // ! 나중에 고칠 거였다면 쏘리!
-  let isValidate = true;
-
-  if ( token != data || data === null ) {
-    throw new ErrorException ( unAuthorizedToken );
-  }
-
-  try {
-    jwt.verify( token, jwtSecret );
-  }catch ( err ) {
-    isValidate = false;
-  }
-
-  return isValidate;
+  return { err, result };
 };
 
-export default { sign, verify, createRefresh, refreshVerify };
+export default { sign, verify, createRefresh, verifyRefresh };
