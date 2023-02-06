@@ -26,7 +26,7 @@ router.post( '/tokens', responseWrapper( async ( req: Request, res: Response ) =
   resSuccess( res , { accessToken, refreshToken });
 }) );
 
-// access, refresh token 재발급 - 미완성
+// access, refresh token 재발급 - 미완성 (시간에 따른 재발급은 미구현)
 router.get( '/reissuance', responseWrapper( async ( req: Request, res: Response ) => {
   const { refresh } = req.headers;
   const { userId } = req.query;
