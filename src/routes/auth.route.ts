@@ -1,10 +1,8 @@
 import { Router, Request, Response } from 'express';
 import ErrorException from '../exceptions/form.exception';
-import { badRequest, badData, unAuthorized } from '../exceptions/definition.exception';
+import { badData, unAuthorizedToken, expiredToken } from '../exceptions/definition.exception';
 import { resSuccess, responseWrapper } from '../utils/handler';
-import { AuthorizationService } from '../services';
 import { verifyHeaders } from '../middlewares/authorizations.middleware';
-// const redisClient = require( '../utils/redis' );
 import jwtUtils from '../utils/jwt-utils';
 import redisClient from '../utils/redis';
 
@@ -31,13 +29,25 @@ router.get( '/reissuance', responseWrapper( async ( req: Request, res: Response 
   const { refresh } = req.headers;
   const { userId } = req.query;
 
-  // refresh token 검증
-  const isValidToken = await jwtUtils.refreshVerify( refresh, userId as string );
-  if ( !isValidToken ) {
-    throw new ErrorException( unAuthorized );
+
+  const dbRefreshToken = await redisClient.get( userId as string ); // refresh token 가져오기
+  if ( dbRefreshToken === null || refresh != dbRefreshToken ) {
+    throw new ErrorException ( unAuthorizedToken );
   }
 
   const accessToken = jwtUtils.sign( req.body );
+
+  // refresh token 검증, 시간추가 로직 필요
+  const { err } = await jwtUtils.verifyRefresh( refresh );
+  if ( err.message === 'invalid signature' ) { // 1. 유효하지 않은 토큰
+    console.log( "유효하지 않은 토큰" );
+    throw new ErrorException ( unAuthorizedToken );
+  }
+  if ( err.message === 'jwt expired' ) {      // 2. 만료 체크
+    console.log( "만료된 토큰" );
+    throw new ErrorException ( expiredToken );
+  }
+
   const refreshToken = jwtUtils.createRefresh();
   await redisClient.set( userId as string, refreshToken ); // refresh token redis에 저장
 
