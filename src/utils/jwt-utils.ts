@@ -9,10 +9,6 @@ const { jwtSecret } = envConfig;
 const TOKEN_EXPIRED = '-1';  // 토큰 만료
 const TOKEN_INVALID = '-2';  // 유효하지 않은 토큰
 
-
-// 로그인 시 사용자 정보를 토대로 access token 발급
-// ! 매개변수로 객체를 받으면서, 객체 그 자체가 아니라 객체 속성만 사용할 경우에는 구조 분해 할당 형식을 많이 사용!
-// ! user -> {role, userId}
 const sign = ({ role, userId }) => { // access token 발급
   console.log( "jwtSecret : " + jwtSecret );
   const payload = { // accesks token에 들어갈 payload
@@ -22,7 +18,7 @@ const sign = ({ role, userId }) => { // access token 발급
 
   return jwt.sign( payload, jwtSecret, { // secret으로 sign하여 발급하고 return
     algorithm: 'HS256', // 암호화 알고리즘
-    expiresIn: '1h', 	  // 유효기간
+    expiresIn: '14d', 	  // 유효기간
   });
 };
 
@@ -37,12 +33,14 @@ const verify = ( token ) => { // access token 검증
 const createRefresh = () => { // refresh token 발급
   return jwt.sign({}, jwtSecret, { // refresh token은 payload 없이 발급
     algorithm: 'HS256',
-    expiresIn: '2h',
+    expiresIn: '90d',
   });
 };
 
 const verifyRefresh = async ( token ) => { // refresh token 검증
-  const { err, result } = jwt.verify( token, jwtSecret, ( err,result ) => {
+  const { err, result } = jwt.verify( token, jwtSecret, ( err ,result ) => {
+    console.log( "err : " + err );
+    console.log( "result : " + result );
     return { err, result };
   });
 

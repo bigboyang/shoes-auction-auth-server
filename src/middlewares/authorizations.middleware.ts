@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import ErrorException from '../exceptions/form.exception';
-import logger from '../config/log.config';
 import { badData, expiredToken, unAuthorizedToken } from '../exceptions/definition.exception';
 import jwtUtils from '../utils/jwt-utils';
 
@@ -13,7 +12,6 @@ export const verifyHeaders = async ( req: Request, res: Response, next: NextFunc
     if ( authorizationPass === 'ok' ) {
       next();
     }
-  
     if ( !authorization ) {
       throw new ErrorException( badData );
     }
