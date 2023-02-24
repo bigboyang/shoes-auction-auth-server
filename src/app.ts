@@ -10,7 +10,6 @@ import { ProxyMiddleware } from './middlewares';
 import { resError } from './utils/handler';
 import ErrorException from './exceptions/form.exception';
 import { notFoundRoute, badData } from './exceptions/definition.exception';
-import { checkDbConnection } from './models';
 
 const app: express.Application = express();
 
@@ -56,7 +55,6 @@ app.use( router );
 // server on
 app.listen( port , async () => {
   logger.info({ serverStart : `[SERVER] Auth server start on port ${port}` });
-  await checkDbConnection();
 });
 
 // Unknown route error
