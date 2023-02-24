@@ -1,5 +1,3 @@
-import { AuthorizationRepository } from '../repositories';
-
-export const aaa = () => {
-  console.log( 'service' );
+export const getAuthFuckUp = () => {
+  console.log( 'fuck u' );
 };
