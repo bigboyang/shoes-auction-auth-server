@@ -4,8 +4,6 @@ import logger from '../config/log.config';
 import sequelizeConfig from '../config/sequelize.config';
 import envConfig from '../config/env.config';
 
-import AuthorizationFactory from './authorization.model';
-
 const { env } = envConfig;
 
 interface SequelizeConfig {
@@ -22,7 +20,6 @@ export const sequelize = new Sequelize( database, username, password, options );
 const db = {
   sequelize,
   Sequelize,
-  Authorization: AuthorizationFactory( sequelize ),
   Op,
 };
 
@@ -78,7 +75,7 @@ export const checkDbConnection = async () => {
     
     await db.sequelize.authenticate();
     if ( env === 'DEV' ) {
-      // await db.sequelize.sync({ force: true, alter: true });
+      await db.sequelize.sync({ force: true, alter: true });
     }
 
     logger.info({ dbMsg: '[DB]Connection has been established successfully.' });
