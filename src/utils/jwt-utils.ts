@@ -18,7 +18,7 @@ const sign = ({ role, userId }) => { // access token 발급
 
   return jwt.sign( payload, jwtSecret, { // secret으로 sign하여 발급하고 return
     algorithm: 'HS256', // 암호화 알고리즘
-    expiresIn: '14d', 	  // 유효기간
+    expiresIn: '45d', 	  // 유효기간
   });
 };
 
