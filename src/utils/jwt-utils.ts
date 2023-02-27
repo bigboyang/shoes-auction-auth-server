@@ -9,11 +9,11 @@ const { jwtSecret } = envConfig;
 const TOKEN_EXPIRED = '-1';  // 토큰 만료
 const TOKEN_INVALID = '-2';  // 유효하지 않은 토큰
 
-const sign = ({ role, userId }) => { // access token 발급
+const sign = ({ role, userUuid }) => { // access token 발급
   console.log( "jwtSecret : " + jwtSecret );
   const payload = { // accesks token에 들어갈 payload
     role : role,
-    userId: userId,
+    userUuid: userUuid,
   };
 
   return jwt.sign( payload, jwtSecret, { // secret으로 sign하여 발급하고 return

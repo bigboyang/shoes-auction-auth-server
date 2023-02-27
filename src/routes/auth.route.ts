@@ -27,9 +27,9 @@ router.post( '/tokens', responseWrapper( async ( req: Request, res: Response ) =
 // access, refresh token 재발급 - 미완성 (시간에 따른 재발급은 미구현)
 router.get( '/reissuance', responseWrapper( async ( req: Request, res: Response ) => {
   const { refresh } = req.headers;
-  const { role ,userId } = req.query;
+  const { role ,userUuid } = req.query;
 
-  const dbRefreshToken = await redisClient.get( userId as string ); // refresh token 가져오기
+  const dbRefreshToken = await redisClient.get( userUuid as string ); // refresh token 가져오기
   if ( dbRefreshToken === null || refresh != dbRefreshToken ) {
     throw new ErrorException ( unAuthorizedToken );
   }
@@ -48,10 +48,10 @@ router.get( '/reissuance', responseWrapper( async ( req: Request, res: Response 
   let refreshToken = refresh;
   if ( result.exp - result.iat < 60 * 60 * 24 * 7 ) { // 3. 만료기간이 7일 미만이면 재발급
     refreshToken = jwtUtils.createRefresh();
-    await redisClient.set( userId as string, refreshToken ); // refresh token redis에 저장
+    await redisClient.set( userUuid as string, refreshToken ); // refresh token redis에 저장
   }
 
-  const accessToken = jwtUtils.sign({ role ,userId });
+  const accessToken = jwtUtils.sign({ role, userUuid });
 
   resSuccess( res , { accessToken, refreshToken });
 }) );
