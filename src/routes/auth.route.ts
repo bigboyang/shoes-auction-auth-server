@@ -11,15 +11,15 @@ const router = Router();
 // 로그인 - 토큰 발급
 router.post( '/tokens', responseWrapper( async ( req: Request, res: Response ) => {
 
-  const { userId, role } = req.body;
+  const { userUuid, role } = req.body;
 
-  if ( !userId || !role ) {
+  if ( !userUuid || !role ) {
     throw new ErrorException( badData );
   }
 
   const accessToken = jwtUtils.sign( req.body );
   const refreshToken = jwtUtils.createRefresh();
-  await redisClient.set( userId, refreshToken ); // refresh token redis에 저장
+  await redisClient.set( userUuid, refreshToken ); // refresh token redis에 저장
 
   resSuccess( res , { accessToken, refreshToken });
 }) );
