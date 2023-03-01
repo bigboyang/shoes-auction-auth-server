@@ -19,7 +19,7 @@ export const verifyHeaders = async ( req: Request, res: Response, next: NextFunc
   
     const token = authorization.split( 'Bearer ' )[1]; // header에서 access token을 가져옵니다.
     const { err, result } = jwtUtils.verify( token ); // token을 검증합니다.
-    
+
     if ( err?.message === 'invalid signature' ) { // 1. 유효하지 않은 토큰
       console.log( "유효하지 않은 토큰" );
       throw new ErrorException ( unAuthorizedToken );
@@ -30,7 +30,7 @@ export const verifyHeaders = async ( req: Request, res: Response, next: NextFunc
     } 
       
     // 유효한 토큰이면 헤더에 payload를 넣어줍니다.
-    req.headers.userUuid = result.userUuid;
+    req.headers.useruuid = result.useruuid;
     req.headers.role = result.role;
       
     next();
