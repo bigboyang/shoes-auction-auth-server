@@ -30,7 +30,7 @@ export const verifyHeaders = async ( req: Request, res: Response, next: NextFunc
     } 
       
     // 유효한 토큰이면 헤더에 payload를 넣어줍니다.
-    req.headers.useruuid = result.useruuid;
+    req.headers.useruuid = result.userUuid;
     req.headers.role = result.role;
       
     next();
